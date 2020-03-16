@@ -101,6 +101,7 @@ body {
   display: inline;
 }
 
+
 .card img {
   width: 50%;
   margin-top: 20px;
@@ -132,7 +133,6 @@ h1 {
   font-weight: 600;
   word-break: break-word;
 }
-
 
 .below0 {
   background: linear-gradient(180deg, #0066FF 0%, #9100A9 100%);

@@ -1,30 +1,48 @@
-const button = document.getElementsByClassName('ghost-button')[0];
-const status = document.getElementById('status');
-let lat,lon;
+const add = document.querySelector('.btn');
 
-button.addEventListener('click',async(e)=>{
-    const apiKey = 'd2a1e88a0e75d5ed58aa1925380c5a3f';
-    if((lat&&lon!=undefined)||!"geolocation" in navigator){
-        let res = await fetch (`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
-        let json = await res.json();
-        status.textContent=json.main.temp+' degrees celsius in '+json.name;
-    }
-    else{
-        status.textContent='Geolocation is not enabled on this browser. Please allow geolocation.';
-    }
-    e.preventDefault();
+
+add.addEventListener('click', async(e) => {
+  console.log('tık');
+  let city = 'london';
+  let weather = await getWeatherData(city);
+  let cards = document.querySelectorAll('.card');
+  let z = document.querySelector('.z');
+  
+  z.innerHTML += `
+  <div class="card ">
+    <div class="location">
+      <p>${weather.city}</p> <span>${weather.countryCode}</span>
+    </div>
+    <h1>${weather.temp}°C</h1>
+    <img src="${weather.icon}">
+    <p class="state">${weather.description}</p>
+  </div>`
+
+
+  // console.log(weather);
+ 
 });
 
-if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-     function success(position) {
-      lat = position.coords.latitude; 
-      lon = position.coords.longitude;
-     },
-    function error(err) {
-      console.error('An error has occured while retrieving location', err)
-    });
-  } 
-  else {
-    console.log('geolocation is not enabled on this browser')
-  }
+
+async function getWeatherData(city) {
+  const apiKey = 'd2a1e88a0e75d5ed58aa1925380c5a3f';
+  let json, weather, res;
+  res = await fetch (`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+  .then( async(data) => {
+    json = await data.json();
+    weather = {
+      icon: json.weather[0],
+      temp: Math.floor(json.main.temp),
+      countryCode: json.sys.country,
+      city: json.name,
+      description: json.weather[0].description
+    }
+    json = '';
+    res = '';
+  })
+  .catch(()=>{
+    console.log('hebele');
+  });
+
+  return weather;
+}
