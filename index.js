@@ -1,15 +1,13 @@
 const add = document.querySelector('.btn');
-
+const textbox = document.querySelector('.textbox');
 
 add.addEventListener('click', async(e) => {
-  console.log('tık');
-  let city = 'london';
+  let city = textbox.value.toString();
   let weather = await getWeatherData(city);
-  let cards = document.querySelectorAll('.card');
-  let z = document.querySelector('.z');
+  let cards = document.querySelector('.cards');
   
-  z.innerHTML += `
-  <div class="card ">
+  cards.innerHTML += `
+  <div class="card ${weather.condition}">
     <div class="location">
       <p>${weather.city}</p> <span>${weather.countryCode}</span>
     </div>
@@ -18,8 +16,7 @@ add.addEventListener('click', async(e) => {
     <p class="state">${weather.description}</p>
   </div>`
 
-
-  // console.log(weather);
+  console.log(weather);
  
 });
 
@@ -31,7 +28,8 @@ async function getWeatherData(city) {
   .then( async(data) => {
     json = await data.json();
     weather = {
-      icon: json.weather[0],
+      condition:'',
+      icon: './images/' + json.weather[0].icon.substring(0,2) + '.png',
       temp: Math.floor(json.main.temp),
       countryCode: json.sys.country,
       city: json.name,
@@ -44,5 +42,12 @@ async function getWeatherData(city) {
     console.log('hebele');
   });
 
+  if(weather.temp <= 0) weather.condition = 'below0';
+  else if (weather.temp > 0 && weather.temp <= 20) {
+  weather.condition = 'b0-20C';
+  }
+  else weather.condition = 'above20';
+
   return weather;
 }
+

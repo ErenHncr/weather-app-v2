@@ -72,17 +72,27 @@ body {
   box-shadow: 0px 0px 4px rgb(0, 238, 255);
 }
 
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  grid-column: span 3;
+  margin-top: 40px;
+}
+
 .card {
   background: rgba(0, 0, 0, 0.479);
   color: white;
   width: 100%;
   min-height: max-content;
+  min-width: 250px;
   padding:10px 30px;
   font-family: Montserrat;
   font-style: normal;
   font-weight: normal;
   font-size: 2rem;
   display: grid;
+  grid-column: span 1;
   justify-items: start;
   border-radius: 25px;
 }
@@ -99,6 +109,7 @@ body {
 }
 .card p {
   display: inline;
+  width: max-content;
 }
 
 
@@ -108,6 +119,7 @@ body {
 }
 
 .location {
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
@@ -144,7 +156,7 @@ h1 {
   box-shadow: 0px 10px 4px #0038FF;
 }
 
-.above25 {
+.above20 {
   background: linear-gradient(180deg, #E48901 0%, #009657 100%);
   box-shadow: 0px 10px 4px #00D2C6;
 }
