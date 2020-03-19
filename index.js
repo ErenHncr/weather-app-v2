@@ -21,8 +21,9 @@ async function setCard(e) {
   let info = document.querySelector('#info');
 
   info.className = weather.error ? 'error': 'success';
+  info.style.opacity = 100;
   setTimeout(() => {
-    info.className = '';
+    info.style.opacity = 0;
   },3000);
 
   if(!weather.error) {
@@ -40,10 +41,12 @@ async function setCard(e) {
   else {
     info.textContent = `${textbox.value} is not a valid city name!`;
   }
-  textbox.value = '';
 
-  console.log(weather);
- 
+  if(textbox.value == '') {
+    info.textContent = `Enter a city name!`;
+  }
+
+  textbox.value = '';
 }
 
 
@@ -60,25 +63,25 @@ async function getWeatherData(city) {
       condition:'',
       icon: './images/' + json.weather[0].icon.substring(0,2) + '.png',
       temp: Math.floor(json.main.temp),
-      countryCode: json.sys.country,
-      city: json.name,
+      countryCode: json.sys.country == undefined ? '0' : json.sys.country,
+      city:city[0].toUpperCase() + city.substring(1),
       description: json.weather[0].description,
       error: false
     }
-    json = '';
-    res = '';
   })
   .catch(()=>{
     weather.error = true;
   });
 
   if(!weather.error) {
+    // css by temperature
     if(weather.temp <= 0) weather.condition = 'below0';
     else if (weather.temp > 0 && weather.temp <= 20) {
       weather.condition = 'b0-20C';
     }
     else weather.condition = 'above20';
   }
+  
   return weather;
 }
 
