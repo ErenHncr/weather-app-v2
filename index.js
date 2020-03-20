@@ -1,6 +1,6 @@
 const add = document.querySelector('.btn');
 const textbox = document.querySelector('.textbox');
-
+let cards = document.querySelector('.cards');
 window.onload = function() {
   textbox.value = '';
   textbox.focus();
@@ -12,12 +12,23 @@ document.addEventListener('keypress', (e) => {
   }
 })
 
+cards.addEventListener('click', (e) => {
+  (e.path).forEach(e => {
+    console.log();
+    if(e.className != undefined &&
+    e.className.includes(' ') &&
+    e.className.split(' ')[0] === 'card') {
+      console.log(e);
+      e.parentNode.removeChild(e);  
+    }
+  });
+})
+
 add.addEventListener('click',setCard);
 
 async function setCard(e) {
   let city = textbox.value.toString();
   let weather = await getWeatherData(city);
-  let cards = document.querySelector('.cards');
   let info = document.querySelector('#info');
 
   info.className = weather.error ? 'error': 'success';
