@@ -4,6 +4,10 @@ let cards = document.querySelector('.cards');
 window.onload = function() {
   textbox.value = '';
   textbox.focus();
+  let cities = JSON.parse(localStorage.getItem('cities'));
+  cities.forEach(city => {
+    loadFromLocal(city);
+  });
 };
 
 document.addEventListener('keypress', (e) => {
@@ -14,11 +18,11 @@ document.addEventListener('keypress', (e) => {
 
 cards.addEventListener('click', (e) => {
   (e.path).forEach(e => {
-    console.log();
     if(e.className != undefined &&
     e.className.includes(' ') &&
     e.className.split(' ')[0] === 'card') {
-      console.log(e);
+      console.log(e.children[0].children[0].textContent);
+      deleteFromLocal(e.children[0].children[0].textContent)
       e.parentNode.removeChild(e);  
     }
   });
@@ -26,7 +30,7 @@ cards.addEventListener('click', (e) => {
 
 add.addEventListener('click',setCard);
 
-async function setCard(e) {
+async function setCard() {
   let city = textbox.value.toString();
   let weather = await getWeatherData(city);
   let info = document.querySelector('#info');
@@ -37,7 +41,9 @@ async function setCard(e) {
     info.style.opacity = 0;
   },3000);
 
-  if(!weather.error) {
+  let checkAvailable = saveToLocal(weather.city, weather.error);
+  console.log(checkAvailable);
+  if(!weather.error && !checkAvailable) {
     info.textContent = `${weather.city} was successfully added.`;
     cards.innerHTML += `
     <div class="card ${weather.condition}">
@@ -48,6 +54,9 @@ async function setCard(e) {
       <img src="${weather.icon}">
       <p class="state">${weather.description}</p>
     </div>`
+  }
+  else if (checkAvailable) {
+    info.textContent = `${weather.city} already exists.`;
   }
   else {
     info.textContent = `${textbox.value} is not a valid city name!`;
@@ -94,5 +103,46 @@ async function getWeatherData(city) {
   }
   
   return weather;
+}
+
+function saveToLocal(city, error) {
+  let arr = [], checkAvailable = false;
+  if(!error) {
+    if(localStorage.getItem('cities') == undefined) {
+      arr.push(city);
+      localStorage.setItem('cities', JSON.stringify(arr));
+    }
+
+    else {
+      arr = JSON.parse(localStorage.getItem('cities'));
+      checkAvailable = arr.includes(city);
+      if(!checkAvailable) {
+        arr.push(city);
+        localStorage.setItem('cities', JSON.stringify(arr));
+      }
+    }
+  }
+  return checkAvailable;
+}
+
+function deleteFromLocal(remove) {
+  let cities =  JSON.parse(localStorage.getItem('cities'));
+  cities = cities.filter((value) => {
+    return value != remove;
+  })
+  localStorage.setItem('cities', JSON.stringify(cities));
+}
+
+async function loadFromLocal(city) {
+  let weather = await getWeatherData(city);
+  cards.innerHTML += `
+    <div class="card ${weather.condition}">
+      <div class="location">
+        <p>${weather.city}</p> <span>${weather.countryCode}</span>
+      </div>
+      <h1>${weather.temp}°C</h1>
+      <img src="${weather.icon}">
+      <p class="state">${weather.description}</p>
+    </div>`
 }
 
