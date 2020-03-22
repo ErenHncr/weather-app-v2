@@ -19,14 +19,22 @@ document.addEventListener('keypress', (e) => {
 })
 
 cards.addEventListener('click', (e) => {
-  (e.path).forEach(e => {
-    if(e.className != undefined &&
-    e.className.includes(' ') &&
-    e.className.split(' ')[0] === 'card') {
-      deleteFromLocal(e.children[0].children[0].textContent)
-      e.parentNode.removeChild(e);  
-    }
-  });
+
+  if(e.target.parentElement.className.includes('card')) {
+    deleteFromLocal(e.target.children[0].textContent);
+    e.currentTarget.removeChild(e.target.parentElement);
+
+  }
+  else {
+    (e.path).forEach(e => {
+      if(e.className != undefined &&
+      e.className.includes(' ') &&
+      e.className.split(' ')[0] === 'card') {
+        deleteFromLocal(e.children[0].children[0].textContent)
+        e.parentNode.removeChild(e);  
+      }
+    });
+  }
 })
 
 add.addEventListener('click',setCard);
