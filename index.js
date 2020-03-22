@@ -5,9 +5,11 @@ window.onload = function() {
   textbox.value = '';
   textbox.focus();
   let cities = JSON.parse(localStorage.getItem('cities'));
-  cities.forEach(city => {
-    loadFromLocal(city);
-  });
+  if(cities != undefined) {
+    cities.forEach(city => {
+      loadFromLocal(city);
+    });
+  }  
 };
 
 document.addEventListener('keypress', (e) => {
@@ -21,7 +23,6 @@ cards.addEventListener('click', (e) => {
     if(e.className != undefined &&
     e.className.includes(' ') &&
     e.className.split(' ')[0] === 'card') {
-      console.log(e.children[0].children[0].textContent);
       deleteFromLocal(e.children[0].children[0].textContent)
       e.parentNode.removeChild(e);  
     }
@@ -42,7 +43,6 @@ async function setCard() {
   },3000);
 
   let checkAvailable = saveToLocal(weather.city, weather.error);
-  console.log(checkAvailable);
   if(!weather.error && !checkAvailable) {
     info.textContent = `${weather.city} was successfully added.`;
     cards.innerHTML += `
@@ -56,6 +56,7 @@ async function setCard() {
     </div>`
   }
   else if (checkAvailable) {
+    info.className = 'error';
     info.textContent = `${weather.city} already exists.`;
   }
   else {
@@ -65,7 +66,6 @@ async function setCard() {
   if(textbox.value == '') {
     info.textContent = `Enter a city name!`;
   }
-
   textbox.value = '';
 }
 
